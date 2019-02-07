@@ -3,7 +3,7 @@
 This is a simple lightweigth but powerful x86 assembler patch build which can assemble patches for function hooks and detours. 
 **It does not do the actual patching** as it only outputs the assembled bytes.
 
-== Simple Example ==
+## Simple Example
 ```cpp
 #include <AsmPatchBuilder.h>
 #include <cstdio>
@@ -21,6 +21,6 @@ int main(int argc, const char* argv[]) {
 }
 ```
 
-== Storing Functions ==
+## Storing Functions
 AsmPatchBuilder will use global thread local storage to store the state of lambda functions.
 Therefore do not use this when a patch is compiled multiple times.
