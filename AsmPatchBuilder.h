@@ -180,27 +180,27 @@ public:
 
 	template<typename LambdaFunc>
 	inline AsmPatchBuilder<Size + 5> callLambdaStdcall(LambdaFunc func) const {
-		return CALL(AsmBuilder::LambdaPayloadInjector::CreateFuncPtrFromLambda(func));
+		return call(AsmBuilder::LambdaPayloadInjector::CreateFuncPtrFromLambda(func));
 	}
 
 	template<typename LambdaFunc>
 	inline AsmPatchBuilder<Size + 5> callLambdaCdecl(LambdaFunc func) const {
-		return CALL(AsmBuilder::LambdaPayloadInjector::CreateFuncPtrFromLambda<AsmBuilder::LambdaPayloadInjector::CallingConvention::CDeclCall>(func));
+		return call(AsmBuilder::LambdaPayloadInjector::CreateFuncPtrFromLambda<AsmBuilder::LambdaPayloadInjector::CallingConvention::CDeclCall>(func));
 	}
 
 	template<typename LambdaFunc>
 	inline AsmPatchBuilder<Size + 5> callLambdaThiscall(LambdaFunc func) const {
-		return CALL(AsmBuilder::LambdaPayloadInjector::CreateFuncPtrFromLambda<AsmBuilder::LambdaPayloadInjector::CallingConvention::ThisCall>(func));
+		return call(AsmBuilder::LambdaPayloadInjector::CreateFuncPtrFromLambda<AsmBuilder::LambdaPayloadInjector::CallingConvention::ThisCall>(func));
 	}
 
 	template<typename LambdaFunc>
 	inline AsmPatchBuilder<Size + 5> callLambdaFastcall(LambdaFunc func) const {
-		return CALL(AsmBuilder::LambdaPayloadInjector::CreateFuncPtrFromLambda<AsmBuilder::LambdaPayloadInjector::CallingConvention::FastCall>(func));
+		return call(AsmBuilder::LambdaPayloadInjector::CreateFuncPtrFromLambda<AsmBuilder::LambdaPayloadInjector::CallingConvention::FastCall>(func));
 	}
 
 	template<AsmBuilder::LambdaPayloadInjector::CallingConvention CallConv, typename LambdaFunc>
 	inline AsmPatchBuilder<Size + 5> callLambdaByCallConv(LambdaFunc func) const {
-		return CALL(AsmBuilder::LambdaPayloadInjector::CreateFuncPtrFromLambda<CallConv>(func));
+		return call(AsmBuilder::LambdaPayloadInjector::CreateFuncPtrFromLambda<CallConv>(func));
 	}
 
 	// TODO: Compile-time error if working with nullptr_t
