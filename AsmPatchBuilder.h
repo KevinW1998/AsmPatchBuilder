@@ -6,7 +6,9 @@
 #include <tuple>
 #include "LambdaPayloadInjector.h"
 #include <vector>
+#include <utility>
 
+namespace AsmPatch {
 
 class AsmPatchData
 {
@@ -26,6 +28,16 @@ public:
 	const std::vector<std::uint8_t>& getData() const
 	{
 		return mData;
+	}
+
+	std::pair<std::uintptr_t, std::vector<std::uint8_t>> getDataPack() const
+	{
+		return std::make_pair(mAddr, mData);
+	}
+
+	std::pair<std::uintptr_t, std::vector<std::uint8_t>> getDataPack() &&
+	{
+		return std::make_pair(mAddr, std::move(mData));
 	}
 };
 
@@ -71,14 +83,10 @@ public:
 		return mAddr + Size;
 	}
 
-	AsmPatchData Compile()
+	AsmPatchData compile()
 	{
 		return AsmPatchData(mAddr, { std::begin(mPatchBytes), std::end(mPatchBytes) });
 	}
-
-	
-
-
 
 	/*******************************
 	* Appending data to the patch *
@@ -115,115 +123,115 @@ public:
 	* Insertion of instructions *
 	*****************************/
 public:
-	inline AsmPatchBuilder<Size + 1> NOP() const {
+	inline AsmPatchBuilder<Size + 1> nop() const {
 		return byte(0x90);
 	}
-	inline AsmPatchBuilder<Size + 1> RET() const {
+	inline AsmPatchBuilder<Size + 1> ret() const {
 		return byte(0xC3);
 	}
-	inline AsmPatchBuilder<Size + 3> RET_NEAR() const {
+	inline AsmPatchBuilder<Size + 3> retNear() const {
 		return bytes(0xC2, 0x04, 0x00);
 	}
-	inline AsmPatchBuilder<Size + 1> PUSH_R32(AsmConsts::R32 arg) const {
+	inline AsmPatchBuilder<Size + 1> pushR32(AsmConsts::R32 arg) const {
 		return byte(0x50 | arg);
 	}
-	inline AsmPatchBuilder<Size + 1> POP_R32(AsmConsts::R32 arg) const {
+	inline AsmPatchBuilder<Size + 1> popR32(AsmConsts::R32 arg) const {
 		return byte(0x58 | arg);
 	}
-	inline AsmPatchBuilder<Size + 1> PUSHF() const {
+	inline AsmPatchBuilder<Size + 1> pushf() const {
 		return byte(0x9C);
 	}
-	inline AsmPatchBuilder<Size + 1> POPF() const {
+	inline AsmPatchBuilder<Size + 1> popf() const {
 		return byte(0x9D);
 	}
 
 	// Convenience shorthand
-	inline AsmPatchBuilder<Size + 1> PUSH_EAX() const { return PUSH_R32(AsmConsts::R32_EAX); }
-	inline AsmPatchBuilder<Size + 1> PUSH_ECX() const { return PUSH_R32(AsmConsts::R32_ECX); }
-	inline AsmPatchBuilder<Size + 1> PUSH_EDX() const { return PUSH_R32(AsmConsts::R32_EDX); }
-	inline AsmPatchBuilder<Size + 1> PUSH_EBX() const { return PUSH_R32(AsmConsts::R32_EBX); }
-	inline AsmPatchBuilder<Size + 1> PUSH_ESP() const { return PUSH_R32(AsmConsts::R32_ESP); }
-	inline AsmPatchBuilder<Size + 1> PUSH_EBP() const { return PUSH_R32(AsmConsts::R32_EBP); }
-	inline AsmPatchBuilder<Size + 1> PUSH_ESI() const { return PUSH_R32(AsmConsts::R32_ESI); }
-	inline AsmPatchBuilder<Size + 1> PUSH_EDI() const { return PUSH_R32(AsmConsts::R32_EDI); }
-	inline AsmPatchBuilder<Size + 1> POP_EAX() const { return POP_R32(AsmConsts::R32_EAX); }
-	inline AsmPatchBuilder<Size + 1> POP_ECX() const { return POP_R32(AsmConsts::R32_ECX); }
-	inline AsmPatchBuilder<Size + 1> POP_EDX() const { return POP_R32(AsmConsts::R32_EDX); }
-	inline AsmPatchBuilder<Size + 1> POP_EBX() const { return POP_R32(AsmConsts::R32_EBX); }
-	inline AsmPatchBuilder<Size + 1> POP_ESP() const { return POP_R32(AsmConsts::R32_ESP); }
-	inline AsmPatchBuilder<Size + 1> POP_EBP() const { return POP_R32(AsmConsts::R32_EBP); }
-	inline AsmPatchBuilder<Size + 1> POP_ESI() const { return POP_R32(AsmConsts::R32_ESI); }
-	inline AsmPatchBuilder<Size + 1> POP_EDI() const { return POP_R32(AsmConsts::R32_EDI); }
+	inline AsmPatchBuilder<Size + 1> pushEAX() const { return pushR32(AsmConsts::R32_EAX); }
+	inline AsmPatchBuilder<Size + 1> pushECX() const { return pushR32(AsmConsts::R32_ECX); }
+	inline AsmPatchBuilder<Size + 1> pushEDX() const { return pushR32(AsmConsts::R32_EDX); }
+	inline AsmPatchBuilder<Size + 1> pushEBX() const { return pushR32(AsmConsts::R32_EBX); }
+	inline AsmPatchBuilder<Size + 1> pushESP() const { return pushR32(AsmConsts::R32_ESP); }
+	inline AsmPatchBuilder<Size + 1> pushEBP() const { return pushR32(AsmConsts::R32_EBP); }
+	inline AsmPatchBuilder<Size + 1> pushESI() const { return pushR32(AsmConsts::R32_ESI); }
+	inline AsmPatchBuilder<Size + 1> pushEDI() const { return pushR32(AsmConsts::R32_EDI); }
+	inline AsmPatchBuilder<Size + 1> popEAX() const { return popR32(AsmConsts::R32_EAX); }
+	inline AsmPatchBuilder<Size + 1> popECX() const { return popR32(AsmConsts::R32_ECX); }
+	inline AsmPatchBuilder<Size + 1> popEDX() const { return popR32(AsmConsts::R32_EDX); }
+	inline AsmPatchBuilder<Size + 1> popEBX() const { return popR32(AsmConsts::R32_EBX); }
+	inline AsmPatchBuilder<Size + 1> popESP() const { return popR32(AsmConsts::R32_ESP); }
+	inline AsmPatchBuilder<Size + 1> popEBP() const { return popR32(AsmConsts::R32_EBP); }
+	inline AsmPatchBuilder<Size + 1> popESI() const { return popR32(AsmConsts::R32_ESI); }
+	inline AsmPatchBuilder<Size + 1> popEDI() const { return popR32(AsmConsts::R32_EDI); }
 
-	inline AsmPatchBuilder<Size + 2> MOV_RESTORE_STACKPTR() {
+	inline AsmPatchBuilder<Size + 2> movRestoreStackptr() {
 		return bytes(0x8B, 0xE5);
 	}
 
-	inline AsmPatchBuilder<Size + 9> RET_STDCALL_FULL() {
+	inline AsmPatchBuilder<Size + 9> retStdcallFull() {
 		return (
-			POP_EDI().
-			POP_ESI().
-			POP_EBX().
-			MOV_RESTORE_STACKPTR().
-			POP_EBP().
-			RET_NEAR()
+			popEDI().
+			popESI().
+			popEBX().
+			movRestoreStackptr().
+			popEBP().
+			retNear()
 			);
 	}
 
 	template<typename LambdaFunc>
-	inline AsmPatchBuilder<Size + 5> CALL_LAMBDA(LambdaFunc func) const {
+	inline AsmPatchBuilder<Size + 5> callLambdaStdcall(LambdaFunc func) const {
 		return CALL(AsmBuilder::LambdaPayloadInjector::CreateFuncPtrFromLambda(func));
 	}
 
 	template<typename LambdaFunc>
-	inline AsmPatchBuilder<Size + 5> CALL_LAMBDA_CDECL(LambdaFunc func) const {
+	inline AsmPatchBuilder<Size + 5> callLambdaCdecl(LambdaFunc func) const {
 		return CALL(AsmBuilder::LambdaPayloadInjector::CreateFuncPtrFromLambda<AsmBuilder::LambdaPayloadInjector::CallingConvention::CDeclCall>(func));
 	}
 
 	template<typename LambdaFunc>
-	inline AsmPatchBuilder<Size + 5> CALL_LAMBDA_THISCALL(LambdaFunc func) const {
+	inline AsmPatchBuilder<Size + 5> callLambdaThiscall(LambdaFunc func) const {
 		return CALL(AsmBuilder::LambdaPayloadInjector::CreateFuncPtrFromLambda<AsmBuilder::LambdaPayloadInjector::CallingConvention::ThisCall>(func));
 	}
 
 	template<typename LambdaFunc>
-	inline AsmPatchBuilder<Size + 5> CALL_LAMBDA_FASTCALL(LambdaFunc func) const {
+	inline AsmPatchBuilder<Size + 5> callLambdaFastcall(LambdaFunc func) const {
 		return CALL(AsmBuilder::LambdaPayloadInjector::CreateFuncPtrFromLambda<AsmBuilder::LambdaPayloadInjector::CallingConvention::FastCall>(func));
 	}
 
 	template<AsmBuilder::LambdaPayloadInjector::CallingConvention CallConv, typename LambdaFunc>
-	inline AsmPatchBuilder<Size + 5> CALL_LAMBDA_BY_CALLCONV(LambdaFunc func) const {
+	inline AsmPatchBuilder<Size + 5> callLambdaByCallConv(LambdaFunc func) const {
 		return CALL(AsmBuilder::LambdaPayloadInjector::CreateFuncPtrFromLambda<CallConv>(func));
 	}
 
 	// TODO: Compile-time error if working with nullptr_t
-	inline AsmPatchBuilder<Size + 5> CALL(void* func) const { return CALL((std::uintptr_t)func); }
-	inline AsmPatchBuilder<Size + 5> CALL(std::uintptr_t func) const {
+	inline AsmPatchBuilder<Size + 5> call(void* func) const { return CALL((std::uintptr_t)func); }
+	inline AsmPatchBuilder<Size + 5> call(std::uintptr_t func) const {
 		return byte(0xE8).dword(func - cursor() - 5);
 	}
 
 	// TODO: Compile-time error if working with nullptr_t
-	inline AsmPatchBuilder<Size + 5> JMP(void* addr) const { return JMP((std::uintptr_t)addr); }
-	inline AsmPatchBuilder<Size + 5> JMP(std::uintptr_t addr) const {
+	inline AsmPatchBuilder<Size + 5> jmp(void* addr) const { return JMP((std::uintptr_t)addr); }
+	inline AsmPatchBuilder<Size + 5> jmp(std::uintptr_t addr) const {
 		return byte(0xE9).dword(addr - cursor() - 5);
 	}
 
-	inline AsmPatchBuilder<Size + 13> SAFE_CALL(void* func) const { return SAFE_CALL((std::uintptr_t)func); }
-	inline AsmPatchBuilder<Size + 13> SAFE_CALL(std::uintptr_t func) const {
+	inline AsmPatchBuilder<Size + 13> safeCall(void* func) const { return safeCall((std::uintptr_t)func); }
+	inline AsmPatchBuilder<Size + 13> safeCall(std::uintptr_t func) const {
 		return (
-			PUSHF().
-			PUSH_EAX().
-			PUSH_ECX().
-			PUSH_EDX().
-			CALL(func).
-			POP_EDX().
-			POP_ECX().
-			POP_EAX().
-			POPF()
+			pushf().
+			pushEAX().
+			pushECX().
+			pushEDX().
+			call(func).
+			popEDX().
+			popECX().
+			popEAX().
+			popf()
 			);
 	}
 
 	template <std::uintptr_t PadSize>
-	inline AsmPatchBuilder<PadSize> NOP_PAD_TO_SIZE() const {
+	inline AsmPatchBuilder<PadSize> nopPadToSize() const {
 		static_assert(PadSize > Size, "Cannot pad smaller than old size");
 
 		AsmPatchBuilder<PadSize> ret(mAddr);
@@ -239,11 +247,11 @@ public:
 	}
 
 	template <std::uintptr_t NopCount>
-	inline AsmPatchBuilder<Size + NopCount> NOPS() const {
+	inline AsmPatchBuilder<Size + NopCount> nops() const {
 		return NOP_PAD_TO_SIZE<Size + NopCount>();
 	}
 
-	inline AsmPatchBuilder<Size + 2> CONDJMP_TO_NOPJMP() const {
+	inline AsmPatchBuilder<Size + 2> condjmpToNopjmp() const {
 		const uint8_t* ptr = (const uint8_t*)cursor();
 		if ((ptr[0] != 0x0F) || ((ptr[1] & 0xF0) != 0x80)) {
 			throw AsmPatchNoCondtionalJump();
@@ -252,10 +260,12 @@ public:
 	}
 };
 
-static inline AsmPatchBuilder<0> PATCH(std::uintptr_t addr) {
+static inline AsmPatchBuilder<0> Patch(std::uintptr_t addr) {
 	return AsmPatchBuilder<0>(addr);
 }
-static inline AsmPatchBuilder<0> PATCH(void* addr) {
-	return PATCH(reinterpret_cast<std::uintptr_t>(addr));
+static inline AsmPatchBuilder<0> Patch(void* addr) {
+	return Patch(reinterpret_cast<std::uintptr_t>(addr));
+}
+
 }
 
