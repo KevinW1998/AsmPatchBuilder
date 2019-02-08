@@ -204,13 +204,13 @@ public:
 	}
 
 	// TODO: Compile-time error if working with nullptr_t
-	inline AsmPatchBuilder<Size + 5> call(void* func) const { return CALL((std::uintptr_t)func); }
+	inline AsmPatchBuilder<Size + 5> call(void* func) const { return call((std::uintptr_t)func); }
 	inline AsmPatchBuilder<Size + 5> call(std::uintptr_t func) const {
 		return byte(0xE8).dword(func - cursor() - 5);
 	}
 
 	// TODO: Compile-time error if working with nullptr_t
-	inline AsmPatchBuilder<Size + 5> jmp(void* addr) const { return JMP((std::uintptr_t)addr); }
+	inline AsmPatchBuilder<Size + 5> jmp(void* addr) const { return jmp((std::uintptr_t)addr); }
 	inline AsmPatchBuilder<Size + 5> jmp(std::uintptr_t addr) const {
 		return byte(0xE9).dword(addr - cursor() - 5);
 	}
