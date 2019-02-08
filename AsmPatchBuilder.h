@@ -29,15 +29,10 @@ public:
 	{
 		return mData;
 	}
-
-	std::pair<std::uintptr_t, std::vector<std::uint8_t>> const& getDataPack() const&
+	
+	std::vector<std::uint8_t>& getDataRef() 
 	{
-		return std::make_pair(mAddr, mData);
-	}
-
-	std::pair<std::uintptr_t, std::vector<std::uint8_t>>&& getDataPack() &&
-	{
-		return std::make_pair(mAddr, std::move(mData));
+		return mData;	
 	}
 };
 
