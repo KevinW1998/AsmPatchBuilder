@@ -30,7 +30,7 @@ public:
 		return mData;
 	}
 
-	std::pair<std::uintptr_t, std::vector<std::uint8_t>> getDataPack() const
+	std::pair<std::uintptr_t, std::vector<std::uint8_t>> const& getDataPack() const&
 	{
 		return std::make_pair(mAddr, mData);
 	}
