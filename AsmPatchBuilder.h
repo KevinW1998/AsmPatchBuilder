@@ -248,7 +248,7 @@ public:
 
 	template <std::uintptr_t NopCount>
 	inline AsmPatchBuilder<Size + NopCount> nops() const {
-		return NOP_PAD_TO_SIZE<Size + NopCount>();
+		return nopPadToSize<Size + NopCount>();
 	}
 
 	inline AsmPatchBuilder<Size + 2> condjmpToNopjmp() const {
