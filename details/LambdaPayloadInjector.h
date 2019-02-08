@@ -3,7 +3,7 @@
 #include <functional>
 #include "MetaPUtils.h"
 
-#include "fixed_size_function.hpp"
+#include "fixed_size_function.h"
 
 // Source: http://videocortex.io/2016/lambdas-callbacks/
 // TODO: Create LambdaWrapper class so operator= can be used.
