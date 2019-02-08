@@ -35,7 +35,7 @@ public:
 		return std::make_pair(mAddr, mData);
 	}
 
-	std::pair<std::uintptr_t, std::vector<std::uint8_t>> getDataPack() &&
+	std::pair<std::uintptr_t, std::vector<std::uint8_t>>&& getDataPack() &&
 	{
 		return std::make_pair(mAddr, std::move(mData));
 	}
